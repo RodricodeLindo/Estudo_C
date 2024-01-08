@@ -23,5 +23,8 @@ int main(){
   } else 
     printf("Erro ao alocar memória!\n");
 
+  free(vet);//memory leak
+  p = realloc(p, 0);// realloc(ponteiro, novo tamanho) retorna um endereço de memória.
+//                     Se o novo tamanho da memória for zero ele a libera, caso não haja tamho suficiente NULL.
   return 0;
 }
