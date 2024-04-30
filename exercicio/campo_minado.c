@@ -42,7 +42,7 @@ void campo_print(int campo[10][10], int campov[10][10]){
 }
 void campo_minado(){
     srand(time(0));
-    int campo[10][10], campov[10][10], bomb = 10 + rand() % 15, temp1, temp2, cont = 0, wro = 0, win = 1, rev;
+    int campo[10][10], campov[10][10], bomb = 10 + rand() % 15, temp1, temp2, cont = 0, wro = 0, win = 1, rev = 0;
     char c, l;
     for(int y = 0; y < 10; y++)
         for(int x = 0; x < 10; x++){
@@ -74,8 +74,8 @@ void campo_minado(){
         }
         printf("\nDigite a linha e a coluna da posição na qual deseje revelar: ");
         scanf("%c %c", &l, &c);
+        getchar();
         cont++;
-        scanf("%c");
         if(isalpha(c)){
             tolower(c);
             temp2 = c - 97;

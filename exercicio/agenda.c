@@ -20,7 +20,7 @@ int cadastrar_contato(contato **c, int quant, int tam){
     contato *novo = malloc(sizeof(contato));
 
     printf("\nDigite o nome do contato: ");
-    scanf("%50[^\n]", novo->nome);
+    scanf("%49[^\n]", novo->nome);
     printf("\nDigite a data de aniversário dd mm aaaa: ");
     scanf("%d%d%d", &novo->dia, &novo->mes, &novo->ano);
     getchar();
@@ -47,7 +47,7 @@ void alterar_contato(contato **c, int quant){
     contato *novo = malloc(sizeof(contato));
 
     printf("\nDigite o nome do contato: ");
-    scanf("%50[^\n]", novo->nome);
+    scanf("%49[^\n]", novo->nome);
     printf("\nDigite a data de aniversário dd mm aaaa: ");
     scanf("%2d%2d%d", &novo->dia, &novo->mes, &novo->ano);
     getchar();
@@ -71,6 +71,16 @@ void salvar(contato **c, int quant, char arquivo[]){
     printf("\n\tNÃO FOI POSSÍVEL ABRIR/CRIAR O ARQUIVO!!!\n");
 }
 
+void salvarb(contato **c, int quant, char arquivo[]){
+  FILE *file = fopen(arquivo, "wb");
+  if (file){
+    for(int x=0; x<quant; x++)
+      fwrite(c[x], sizeof(contato), 1, file);
+    fclose(file);
+  } else 
+    printf("\nError ao ler arquivo!!\n");
+}
+
 int ler_arquivo(contato **c, char arquivo[]){
   FILE *file = fopen(arquivo, "r");
   contato *novo = malloc(sizeof(contato));
@@ -78,12 +88,11 @@ int ler_arquivo(contato **c, char arquivo[]){
 
   if(file){
     fscanf(file, "%d\n", &quant);
-    for(int x=0; x<quant; x++){
+    for(int x=0; x < quant; x++){
       fscanf(file, "%50[^\n]", novo->nome);
       fscanf(file, "%d %d %d\n", &novo->dia, &novo->mes, &novo->ano);
       c[x] = novo;
-      if(x < quant-1)
-        novo = malloc(sizeof(contato));
+      novo = malloc(sizeof(contato));
     }
     fclose(file);
   } else 
@@ -91,14 +100,34 @@ int ler_arquivo(contato **c, char arquivo[]){
   return quant;
 }
 
+int ler_arquivob(contato **c, char arquivo[]){
+  int quant = 0;
+  contato *novo = malloc(sizeof(contato));
+  FILE *file = fopen(arquivo, "rb");
+
+  if(file){
+    quant = 0;
+    while(fread(novo, sizeof(contato), 1, file)){
+      c[quant] = novo;
+      quant++;
+      novo = malloc(sizeof(contato));
+    }
+    fclose(file);
+  } else 
+    printf("\nError ao ler arquivo!!\n");
+
+  return quant;
+}
+
 int main(){
   contato *agenda[50];
   int tam = 50, quant = 0, opc;
   char arquivo[] = {"agenda.txt"};
+  char arquivo2[] = {"agenda.dat"};
   
   do{
     printf("\n\n\t\tCalendário de Aniversários!!\n\n");
-    printf("1 - Cadastrar\n2 - Imprimir\n3 - Salvar\n4 - Ler arquivo\n5 - Alterar\n0 - Sair\n\n-> ");
+    printf("1 - Cadastrar\n2 - Imprimir\n3 - Salvar\n4 - Ler arquivo\n5 - Alterar\n6 - SalvarB\n7 - LerB\n0 - Sair\n\n-> ");
     scanf("%d", &opc);
     getchar();
     switch(opc){
@@ -113,9 +142,17 @@ int main(){
         break;
       case 4:
         quant = ler_arquivo(agenda, arquivo);
+        imprimir(agenda, quant);
         break;
       case 5:
         alterar_contato(agenda, quant);
+        break;
+      case 6:
+        salvarb(agenda, quant, arquivo2);
+        break;
+      case 7:
+        quant = ler_arquivob(agenda, arquivo2);
+        imprimir(agenda, quant);
         break;
       default:
         if(opc != 0)

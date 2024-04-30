@@ -33,7 +33,7 @@ int main(){
         scanf("%d", &player);
         vida--;
         if(player == num){
-            system("cls");
+            system("clear");
             printf("  _____  _____            ____    __  _   _  _____\n");
             printf(" |  __ \\|  __ \\     /\\   |  _ \\ _/_/_| \\ | |/ ____|\n");
             printf(" | |__) | |__) |   /  \\  | |_) | ____|  \\| | (___\n");
