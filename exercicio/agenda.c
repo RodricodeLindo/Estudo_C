@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <locale.h>
 
 typedef struct{
   char nome[50];
@@ -54,6 +55,34 @@ void alterar_contato(contato **c, int quant){
     c[id] = novo;
   } else
       printf("\n\tCódigo inválido!\n");
+}
+
+void alterarb(char arquivo[]){
+  FILE *file = fopen(arquivo, "rb+");
+  contato c;
+  int id, i = 1;
+
+  if(file){
+    printf("\tLista de contatos:\n");
+    printf("\t-----------------------------------------------------------\n");
+    while(fread(&c, sizeof(contato), 1, file)){
+      printf("\t%d = %2d/%2d/%4d\t%s\n", i, c.dia, c.mes, c.ano, c.nome);
+      i++;
+    }
+    printf("\n\tDigite o indice do contato que deseja alterar:");
+    scanf("%d", %id);
+    getchar();
+    id--;
+
+    if(id >= 0 && id < i - 1){
+      printf("\tDigite nome e data de nascimento dd mm aaaa: ");
+      scanf("%49[^\n]%d%d%d", c.nome, &c.dia, &c.mes, &c.ano);
+      fseek(file, id * sizeof(contato), SEEK_SET);
+      fwrite(&c, sizeof(contato), 1, file);
+    }
+    fclose(file);
+  } else 
+    printf("\nErro ao abrir arquivo!\n");
 }
 
 void salvar(contato **c, int quant, char arquivo[]){
@@ -120,6 +149,7 @@ int ler_arquivob(contato **c, char arquivo[]){
 }
 
 int main(){
+  setlocale(LC_ALL, "portuguese-brazilian");
   contato *agenda[50];
   int tam = 50, quant = 0, opc;
   char arquivo[] = {"agenda.txt"};
@@ -153,6 +183,9 @@ int main(){
       case 7:
         quant = ler_arquivob(agenda, arquivo2);
         imprimir(agenda, quant);
+        break;
+      case 8:
+        alterarb(arquivo2);
         break;
       default:
         if(opc != 0)
