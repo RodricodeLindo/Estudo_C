@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<ctype.h>
+#include<locale.h>
 
 typedef struct no{
   float valor;
@@ -14,7 +15,7 @@ No* push(No *pilha, float valor){
     novo->proximo = pilha;
     return novo;
   } else 
-    printf("\nErro ao alocar memoria!!!\n");
+    printf("\nErro ao alocar memória!!!\n");
   return NULL;
 }
 
@@ -45,15 +46,16 @@ float elevadodec(float num, int x){
 }
 
 float notacao_polonesa(char calc[]){
-  int inte=0, deci=0;
+  int inte=0, deci=0, menos=0;
   float aux=0;
   No *pilha = NULL, *pilh = NULL, *remove;
   for(int x=0; calc[x]!='\0'; x++){
     aux = 0;
     if(isdigit(calc[x])){
-      if(x > 0 && calc[x-1] == '-')
+      if(x > 0 && (calc[x-1] == '-' || menos)){
         pilha = push(pilha, 48-calc[x]);
-      else 
+        menos=1;
+      } else 
         pilha = push(pilha, calc[x]-48);
       inte++;
     } else if(calc[x] == ',' || calc[x] == '.'){
@@ -67,6 +69,7 @@ float notacao_polonesa(char calc[]){
       }
       x--;
     } else if(calc[x] == ' ' && inte > 0){
+      menos=0;
       while(deci>0){
         remove = pop(&pilha);
         aux += elevadodec(remove->valor, deci);
@@ -128,7 +131,7 @@ float notacao_polonesa(char calc[]){
           }
           break;
         default:
-          printf("\nERRO! valor invalido\n");
+          printf("\nERRO! valor inválido\n");
       }
     }
   }
@@ -136,7 +139,8 @@ float notacao_polonesa(char calc[]){
     remove = pop(&pilha);
     aux = remove->valor;
     free(remove);
-  }
+  } else 
+    printf("\nErro, nenhum valor valido foi apresentado!\n");
   if(pilha){
     while(pilha){
       remove = pop(&pilha);
@@ -149,6 +153,7 @@ float notacao_polonesa(char calc[]){
 }
 
 int main(){
+  setlocale(LC_ALL, "portuguese-brazilian");
   char calc[30];
   printf("Digite o calculo: ");
   scanf("%29[^\n]", calc);
